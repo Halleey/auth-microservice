@@ -17,7 +17,7 @@ public class WebConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/doctors" ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login/**" ).permitAll()
                         .anyRequest().authenticated()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable);
         return httpSecurity.build();

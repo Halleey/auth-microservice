@@ -32,10 +32,7 @@ public class JwtUtil {
         claims.put("crm", crm);
         claims.put("expertise", expertise);
 
-        return Jwts.builder().setClaims(claims).
-                setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+ expirationMs)).
+        return Jwts.builder().claims(claims).subject(username).issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + expirationMs)).
                 signWith(secretKey(), SignatureAlgorithm.HS256).compact();
     }
 
