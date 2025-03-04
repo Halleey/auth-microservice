@@ -4,6 +4,15 @@ public class DoctorResponseDTO {
     private String name;
     private String crm;
     private String expertise;
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public String getName() {
         return name;
