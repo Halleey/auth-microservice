@@ -4,6 +4,7 @@ import com.api.auth.dto.AuthRequestDTO;
 import com.api.auth.dto.DoctorResponseDTO;
 import com.api.auth.jwt.JwtUtil;
 import com.api.auth.jwt.Token;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -23,18 +24,16 @@ public class LoginSericeImpl implements LoginService {
     @Override
     public Mono<String> loginAuthenticate(AuthRequestDTO requestDTO) {
         return webClient.post()
-                .uri("/doctors")
-                .bodyValue(requestDTO)  // manda como JSON no corpo
+                .uri("/doctors/login")
+                .bodyValue(requestDTO)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response ->
+                        Mono.error(new RuntimeException("Invalid credentials"))
+                )
                 .bodyToMono(DoctorResponseDTO.class)
-                .flatMap(doctorResponseDTO -> {
-                    if (doctorResponseDTO == null) {
-                        return Mono.error(new RuntimeException("Invalid credentials"));
-                    }
-                    return jwtUtil.generateToken(doctorResponseDTO)
-                            .map(Token::token);
-                });
+                .flatMap(doctorLoginDTO -> jwtUtil.generateToken(doctorLoginDTO)
+                        .map(Token::token)
+                );
     }
 
 }
-
