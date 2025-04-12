@@ -46,16 +46,16 @@ public class JwtUtil {
                     .claim("name", user.getName())
                     .claim("crm", user.getCrm())
                     .claim("expertise", user.getExpertise())
-                    .claim("role", user.getRole().toString())
+                    .claim("role", user.getRole())
                     .setIssuedAt(new Date())
                     .setExpiration(toExpireDate())
                     .signWith(generateKey(), SignatureAlgorithm.HS256)
                     .compact();
-
             System.out.println("✅ Token gerado com sucesso: " + token);
-            return new Token(JWT_BEARER + token);
+            return new Token(token);
         }).subscribeOn(Schedulers.boundedElastic());
     }
+
 
     private Claims getClaimsFromToken(String token) {
         try {
@@ -89,13 +89,11 @@ public class JwtUtil {
             }
         }).subscribeOn(Schedulers.boundedElastic());
     }
-
     public Mono<String> getUsernameFromToken(String token) {
         return Mono.fromCallable(() -> getClaimsFromToken(token))
                 .map(Claims::getSubject)
                 .subscribeOn(Schedulers.boundedElastic());
     }
-
     private String refactorToken(String token) {
         return token.replaceFirst("^Bearer\\s*", "");
     }

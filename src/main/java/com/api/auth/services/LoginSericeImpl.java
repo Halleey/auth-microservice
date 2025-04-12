@@ -22,11 +22,9 @@ public class LoginSericeImpl implements LoginService {
 
     @Override
     public Mono<String> loginAuthenticate(AuthRequestDTO requestDTO) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/doctors")
-                        .queryParam("name", requestDTO.getName())
-                        .queryParam("password", requestDTO.getPassword())
-                        .build())
+        return webClient.post()
+                .uri("/doctors")
+                .bodyValue(requestDTO)  // manda como JSON no corpo
                 .retrieve()
                 .bodyToMono(DoctorResponseDTO.class)
                 .flatMap(doctorResponseDTO -> {
@@ -34,8 +32,9 @@ public class LoginSericeImpl implements LoginService {
                         return Mono.error(new RuntimeException("Invalid credentials"));
                     }
                     return jwtUtil.generateToken(doctorResponseDTO)
-                            .map(Token::token); // Extrai apenas a string do token
+                            .map(Token::token);
                 });
     }
-    }
+
+}
 

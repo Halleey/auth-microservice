@@ -21,7 +21,7 @@ public class LoginControllerImpl implements LoginFace {
     @Override
     public Mono<ResponseEntity<String>> loginController(AuthRequestDTO requestDTO) {
         return loginService.loginAuthenticate(requestDTO)
-                .map(ResponseEntity::ok) // Retorna HTTP 200 com o token
+                .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()))); // Trata erro
     }
 }
