@@ -8,6 +8,9 @@ import reactor.core.publisher.Mono;
 
 public interface LoginFace {
 
-    @PostMapping
+    @PostMapping("/doc")
     Mono<ResponseEntity<String>> loginController(@RequestBody AuthRequestDTO requestDTO);
+
+    @PostMapping("/nurse")
+    Mono<ResponseEntity<String>> loginNurse(@RequestBody AuthRequestDTO requestDTO);
 }

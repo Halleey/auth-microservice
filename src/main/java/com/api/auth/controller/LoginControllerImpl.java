@@ -24,5 +24,11 @@ public class LoginControllerImpl implements LoginFace {
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()))); // Trata erro
     }
+
+    @Override
+    public Mono<ResponseEntity<String>> loginNurse(AuthRequestDTO requestDTO) {
+        return  loginService.loginNurse(requestDTO).map(ResponseEntity::ok).onErrorResume
+                (e -> Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage())));
+    }
 }
 

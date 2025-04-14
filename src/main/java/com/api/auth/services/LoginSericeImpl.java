@@ -2,6 +2,7 @@ package com.api.auth.services;
 
 import com.api.auth.dto.AuthRequestDTO;
 import com.api.auth.dto.DoctorResponseDTO;
+import com.api.auth.dto.NurseResponseDTO;
 import com.api.auth.jwt.JwtUtil;
 import com.api.auth.jwt.Token;
 import org.springframework.http.HttpStatusCode;
@@ -34,6 +35,14 @@ public class LoginSericeImpl implements LoginService {
                 .flatMap(doctorLoginDTO -> jwtUtil.generateToken(doctorLoginDTO)
                         .map(Token::token)
                 );
+    }
+
+    @Override
+    public Mono<String> loginNurse(AuthRequestDTO requestDTO) {
+        return  webClient.post().uri("/nurse/login").bodyValue(requestDTO).retrieve().onStatus(HttpStatusCode::is4xxClientError,
+                clientResponse -> Mono.error(new RuntimeException("invaliid credentials"))).
+                bodyToMono(NurseResponseDTO.class).
+                flatMap(nurseResponseDTO -> jwtUtil.generateToken(nurseResponseDTO).map(Token::token));
     }
 
 }

@@ -5,4 +5,6 @@ import reactor.core.publisher.Mono;
 
 public interface LoginService {
     Mono<String> loginAuthenticate(AuthRequestDTO requestDTO);
+
+    Mono<String> loginNurse(AuthRequestDTO requestDTO);
 }

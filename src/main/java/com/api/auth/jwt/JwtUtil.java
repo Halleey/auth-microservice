@@ -1,6 +1,7 @@
 package com.api.auth.jwt;
 
 import com.api.auth.dto.DoctorResponseDTO;
+import com.api.auth.dto.NurseResponseDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -37,6 +38,25 @@ public class JwtUtil {
     private Date toExpireDate() {
         return new Date(System.currentTimeMillis() + expirationMs);
     }
+
+    public Mono<Token> generateToken(NurseResponseDTO user) {
+        return Mono.fromCallable(() -> {
+            String token = Jwts.builder()
+                    .setHeaderParam("typ", "JWT")
+                    .setSubject(user.getName())
+                    .claim("name", user.getName())
+                    .claim("registrationNumber", user.getRegistrationNumber())
+                    .claim("shift", user.getShift())
+                    .claim("role", user.getRole())
+                    .setIssuedAt(new Date())
+                    .setExpiration(toExpireDate())
+                    .signWith(generateKey(), SignatureAlgorithm.HS256)
+                    .compact();
+            System.out.println("✅ Token gerado com sucesso: " + token);
+            return new Token(token);
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
 
     public Mono<Token> generateToken(DoctorResponseDTO user) {
         return Mono.fromCallable(() -> {
